@@ -40,12 +40,13 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
+        <ChartPanel entries={entries} />
         <TargetsPanel />
         <FoodJournalPanel 
           onOpenSettings={() => setSettingsOpen(true)}
           onEntriesChange={handleEntriesChange}
         />
-        <ChartPanel entries={entries} />
+        
       </main>
 
       {/* Settings Modal */}
