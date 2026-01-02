@@ -1,0 +1,77 @@
+// Target calculations as per PRD formulas
+
+export interface Targets {
+  dailyCalories: number;
+  proteinGrams: number;
+  proteinCalories: number;
+  fatCalories: number;
+  fatGrams: number;
+  carbCalories: number;
+  carbGrams: number;
+  waterKg: number;
+}
+
+export function calculateTargets(goalWeightLb: number): Targets {
+  const dailyCalories = Math.round(goalWeightLb * 12);
+  const proteinGrams = Math.round(goalWeightLb * 1);
+  const proteinCalories = Math.round(proteinGrams * 4);
+  const fatCalories = Math.round(dailyCalories * 0.25);
+  const fatGrams = Math.round(fatCalories / 9);
+  const carbCalories = dailyCalories - proteinCalories - fatCalories;
+  const carbGrams = Math.round(carbCalories / 4);
+  const waterKg = Math.round((goalWeightLb / 2.20462) * 10) / 10;
+
+  return {
+    dailyCalories,
+    proteinGrams,
+    proteinCalories,
+    fatCalories,
+    fatGrams,
+    carbCalories,
+    carbGrams,
+    waterKg,
+  };
+}
+
+export const FORMULAS = {
+  dailyCalories: {
+    title: 'How this is calculated',
+    formula: 'Daily calories = goal weight × 12',
+    example: (weight: number) => `Example: ${weight} lb × 12 = ${weight * 12} kcal/day`,
+  },
+  protein: {
+    title: 'How this is calculated',
+    formula: 'Protein grams = goal weight × 1\nProtein calories = protein grams × 4',
+    example: (weight: number) => `Example: ${weight} lb → ${weight} g → ${weight * 4} kcal`,
+  },
+  fat: {
+    title: 'How this is calculated',
+    formula: 'Fat calories = daily calories × 0.25\nFat grams = fat calories ÷ 9',
+    example: (weight: number) => {
+      const dailyCal = weight * 12;
+      const fatCal = Math.round(dailyCal * 0.25);
+      const fatG = Math.round(fatCal / 9);
+      return `Example: ${dailyCal} kcal → ${fatCal} kcal → ${fatG} g`;
+    },
+  },
+  carbs: {
+    title: 'How this is calculated',
+    formula: 'Carb calories = daily calories − protein calories − fat calories\nCarb grams = carb calories ÷ 4',
+    example: (weight: number) => {
+      const dailyCal = weight * 12;
+      const proteinCal = weight * 4;
+      const fatCal = Math.round(dailyCal * 0.25);
+      const carbCal = dailyCal - proteinCal - fatCal;
+      const carbG = Math.round(carbCal / 4);
+      return `Example: ${dailyCal} − ${proteinCal} − ${fatCal} = ${carbCal} kcal → ${carbG} g`;
+    },
+  },
+  water: {
+    title: 'How this is calculated',
+    formula: 'Water (kg/day) = goal weight (lb) ÷ 2.20462',
+    example: (weight: number) => {
+      const waterKg = Math.round((weight / 2.20462) * 10) / 10;
+      return `Example: ${weight} lb ÷ 2.20462 = ${waterKg} kg/day`;
+    },
+  },
+};
