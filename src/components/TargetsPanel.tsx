@@ -5,9 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { calculateTargets, FORMULAS, Targets } from '@/lib/calculations';
-import { GoalRepository } from '@/lib/repositories';
+import { FoodEntry, getDateKey, GoalRepository } from '@/lib/repositories';
 
-export function TargetsPanel() {
+interface TargetsPanelProps {
+  entries: FoodEntry[];
+}
+
+export function TargetsPanel({ entries }: TargetsPanelProps) {
   const [goalWeight, setGoalWeight] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [targets, setTargets] = useState<Targets | null>(null);
@@ -21,9 +25,31 @@ export function TargetsPanel() {
     }
   }, []);
 
+  const todayKey = getDateKey(new Date().toISOString());
+  const todaysTotals = entries.reduce(
+    (acc, entry) => {
+      if (entry.dateKey !== todayKey) return acc;
+      acc.calories += entry.calories;
+      acc.protein += entry.protein_g;
+      acc.carbs += entry.carbs_g;
+      acc.fat += entry.fat_g;
+      return acc;
+    },
+    { calories: 0, protein: 0, carbs: 0, fat: 0 },
+  );
+
+  const remaining = targets
+    ? {
+        calories: targets.dailyCalories - todaysTotals.calories,
+        protein: targets.proteinGrams - todaysTotals.protein,
+        carbs: targets.carbGrams - todaysTotals.carbs,
+        fat: targets.fatGrams - todaysTotals.fat,
+      }
+    : null;
+
   const handleChange = (value: string) => {
     setGoalWeight(value);
-    
+
     if (!value.trim()) {
       setError(null);
       setTargets(null);
@@ -31,13 +57,13 @@ export function TargetsPanel() {
     }
 
     const parsed = parseFloat(value);
-    
+
     if (isNaN(parsed)) {
       setError('Please enter a valid number.');
       setTargets(null);
       return;
     }
-    
+
     if (parsed <= 0) {
       setError('Enter a goal weight greater than 0.');
       setTargets(null);
@@ -82,31 +108,47 @@ export function TargetsPanel() {
         <div className="space-y-3">
           <TargetRow
             label="Daily Calories"
-            value={targets ? `${targets.dailyCalories} kcal` : '—'}
+            value={
+              targets
+                ? `${targets.dailyCalories} cal • ${remaining?.calories ?? 0} cal remaining`
+                : '-'
+            }
             formula={FORMULAS.dailyCalories}
             exampleWeight={weightNum}
           />
           <TargetRow
             label="Protein"
-            value={targets ? `${targets.proteinGrams} g • ${targets.proteinCalories} kcal` : '—'}
+            value={
+              targets
+                ? `${targets.proteinGrams} g • ${remaining?.protein ?? 0} g remaining`
+                : '-'
+            }
             formula={FORMULAS.protein}
             exampleWeight={weightNum}
           />
           <TargetRow
             label="Fat"
-            value={targets ? `${targets.fatGrams} g • ${targets.fatCalories} kcal` : '—'}
+            value={
+              targets
+                ? `${targets.fatGrams} g • ${remaining?.fat ?? 0} g remaining`
+                : '-'
+            }
             formula={FORMULAS.fat}
             exampleWeight={weightNum}
           />
           <TargetRow
             label="Carbs"
-            value={targets ? `${targets.carbGrams} g • ${targets.carbCalories} kcal` : '—'}
+            value={
+              targets
+                ? `${targets.carbGrams} g • ${remaining?.carbs ?? 0} g remaining`
+                : '-'
+            }
             formula={FORMULAS.carbs}
             exampleWeight={weightNum}
           />
           <TargetRow
-            label="Water Intake"
-            value={targets ? `${targets.waterKg} kg/day` : '—'}
+            label="Water"
+            value={targets ? `${targets.waterOz} oz` : '-'}
             formula={FORMULAS.water}
             exampleWeight={weightNum}
           />

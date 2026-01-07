@@ -18,7 +18,7 @@ interface UpgradeModalProps {
 const DEFAULT_MESSAGE =
   "I want to upgrade for features like persistent storage to the cloud, real-time data sync, collaboration or competition with friends/family, a meal planner, and an agentic shopping solution.";
 const EMAIL_TO = 'aigirldad.labs@gmail.com';
-const SUBJECT = 'Macro Planner upgrade request';
+const SUBJECT = 'Macro Mapper upgrade request';
 const DONATION_URL = 'https://www.buymeacoffee.com/aigirldad';
 
 export function UpgradeModal({ open, onOpenChange }: UpgradeModalProps) {

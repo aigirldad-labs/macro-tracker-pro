@@ -82,7 +82,7 @@ function EntryRow({ entry, onEdit, onDelete }: EntryRowProps) {
             {entry.label || '(No label)'}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {dateStr} • P {entry.protein_g} / C {entry.carbs_g} / F {entry.fat_g} • {entry.calories} kcal
+            {dateStr} • P {entry.protein_g} / C {entry.carbs_g} / F {entry.fat_g} • {entry.calories} cal
           </p>
         </div>
         <Badge variant="secondary" className="text-xs shrink-0">
@@ -122,3 +122,4 @@ function EntryRow({ entry, onEdit, onDelete }: EntryRowProps) {
     </div>
   );
 }
+

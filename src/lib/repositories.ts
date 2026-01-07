@@ -21,7 +21,10 @@ export interface FoodEntry {
 
 // UUID generator
 function generateId(): string {
-  return crypto.randomUUID();
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `entry-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 // Date key from datetime

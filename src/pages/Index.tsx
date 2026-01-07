@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ArrowUpRight, Settings } from 'lucide-react';
+import { Settings, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { TargetsPanel } from '@/components/TargetsPanel';
@@ -23,7 +23,7 @@ const Index = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-foreground">Macro Planner</h1>
+          <h1 className="text-lg font-semibold text-foreground">Macro Mapper</h1>
           <div className="flex items-center gap-1">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -33,7 +33,7 @@ const Index = () => {
                   onClick={() => setUpgradeOpen(true)}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  <ArrowUpRight className="h-5 w-5" />
+                  <Sparkles className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Upgrade</TooltipContent>
@@ -58,11 +58,8 @@ const Index = () => {
       {/* Main Content */}
       <main className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
         <ChartPanel entries={entries} />
-        <TargetsPanel />
-        <FoodJournalPanel 
-          onOpenSettings={() => setSettingsOpen(true)}
-          onEntriesChange={handleEntriesChange}
-        />
+        <TargetsPanel entries={entries} />
+        <FoodJournalPanel onEntriesChange={handleEntriesChange} />
         
       </main>
 

@@ -1,73 +1,114 @@
-# Welcome to your Lovable project
+# Macro Mapper
 
-## Project info
+Macro Mapper helps you set daily macro targets and log meals.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Deployed
 
-## How can I edit this code?
+- https://aigirldad-labs.github.io/macro-tracker-pro
 
-There are several ways of editing your application.
+## Getting Started (Local Development)
 
-**Use Lovable**
+Prerequisites:
+- Node.js 20 LTS
+- npm 9+ (bundled with Node)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Install and run:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Vite will print the local URL (usually http://localhost:5173/).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
+## Dependencies
 
 - Vite
+- React 18
 - TypeScript
-- React
-- shadcn-ui
 - Tailwind CSS
+- shadcn/ui
+- Radix UI
+- TanStack Query
+- Recharts
 
-## How can I deploy this project?
+## Example Meals (Estimates)
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Macros below are reasonable estimates and will vary by brand and portion size.
 
-## Can I connect a custom domain to my Lovable project?
+- Peanut butter and jelly: 14g protein / 44g carbs / 16g fat (~376 cal)
+- Chicken broccoli and rice: 55g protein / 50g carbs / 6g fat (~474 cal)
+- Pizza (2 slices): 24g protein / 64g carbs / 22g fat (~550 cal)
+- Ice cream (3 scoops): 9g protein / 90g carbs / 30g fat (~666 cal)
+- Protein shake: 25g protein / 5g carbs / 2g fat (~138 cal)
+- Dozen eggs: 72g protein / 2g carbs / 60g fat (~836 cal)
 
-Yes, you can!
+## Seed Example Data
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+This will overwrite any existing food entries in local storage.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+1. Start the dev server: `npm run dev`
+2. Open the app in your browser
+3. Open DevTools Console and run:
+
+```js
+(() => {
+  const entries = [
+    { label: 'Peanut butter and jelly', protein_g: 14, carbs_g: 44, fat_g: 16 },
+    { label: 'Chicken broccoli and rice', protein_g: 55, carbs_g: 50, fat_g: 6 },
+    { label: 'Pizza (2 slices)', protein_g: 24, carbs_g: 64, fat_g: 22 },
+    { label: 'Ice cream (3 scoops)', protein_g: 9, carbs_g: 90, fat_g: 30 },
+    { label: 'Protein shake', protein_g: 25, carbs_g: 5, fat_g: 2 },
+    { label: 'Dozen eggs', protein_g: 72, carbs_g: 2, fat_g: 60 },
+  ];
+
+  const now = new Date();
+  const minutesStep = 120;
+
+  const makeId = () =>
+    (crypto.randomUUID && crypto.randomUUID()) ||
+    `seed-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  const seeded = entries.map((entry, index) => {
+    const dt = new Date(now);
+    dt.setMinutes(now.getMinutes() - index * minutesStep);
+
+    const dateKey = [
+      dt.getFullYear(),
+      String(dt.getMonth() + 1).padStart(2, '0'),
+      String(dt.getDate()).padStart(2, '0'),
+    ].join('-');
+
+    const calories = Math.round(
+      entry.protein_g * 4 + entry.carbs_g * 4 + entry.fat_g * 9,
+    );
+
+    return {
+      id: makeId(),
+      datetime: dt.toISOString(),
+      dateKey,
+      calories,
+      source: 'manual',
+      rawText: null,
+      ...entry,
+    };
+  });
+
+  localStorage.setItem('macroPlanner.entries', JSON.stringify(seeded));
+  console.log(`Seeded ${seeded.length} demo entries.`);
+})();
+```
+
+Refresh the page to see the seeded entries.
+
+## TODO
+
+- Add cloud persistence and real-time sync.
+- Enable collaboration and friendly competition.
+- Add a meal planner.
+- Add an agentic shopping workflow.
+- Offer an upgrade flow to capture interest.
+
+## Contact
+
+- Email: [aigirldad.labs@gmail.com](mailto:aigirldad.labs@gmail.com)

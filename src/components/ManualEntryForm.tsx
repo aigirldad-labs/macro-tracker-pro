@@ -127,7 +127,7 @@ export function ManualEntryForm({ onSubmit }: ManualEntryFormProps) {
 
       <div className="flex items-center justify-between py-2 px-3 bg-muted rounded-lg">
         <span className="text-sm text-muted-foreground">Calories</span>
-        <span className="text-sm font-medium text-foreground">{calories} kcal</span>
+        <span className="text-sm font-medium text-foreground">{calories} cal</span>
       </div>
 
       {error && (
@@ -140,3 +140,4 @@ export function ManualEntryForm({ onSubmit }: ManualEntryFormProps) {
     </form>
   );
 }
+
