@@ -8,7 +8,6 @@ export interface Targets {
   fatGrams: number;
   carbCalories: number;
   carbGrams: number;
-  waterOz: number;
 }
 
 export function calculateTargets(goalWeightLb: number): Targets {
@@ -19,7 +18,6 @@ export function calculateTargets(goalWeightLb: number): Targets {
   const fatGrams = Math.round(fatCalories / 9);
   const carbCalories = dailyCalories - proteinCalories - fatCalories;
   const carbGrams = Math.round(carbCalories / 4);
-  const waterOz = Math.round((goalWeightLb / 2.20462) * 10) / 10;
 
   return {
     dailyCalories,
@@ -29,7 +27,6 @@ export function calculateTargets(goalWeightLb: number): Targets {
     fatGrams,
     carbCalories,
     carbGrams,
-    waterOz,
   };
 }
 
@@ -64,14 +61,6 @@ export const FORMULAS = {
       const carbCal = dailyCal - proteinCal - fatCal;
       const carbG = Math.round(carbCal / 4);
       return `Example: ${dailyCal} - ${proteinCal} - ${fatCal} = ${carbCal} cal -> ${carbG} g`;
-    },
-  },
-  water: {
-    title: 'How this is calculated',
-    formula: 'Water = goal weight converted to kg, in oz',
-    example: (weight: number) => {
-      const waterOz = Math.round((weight / 2.20462) * 10) / 10;
-      return `Example: ${weight} lb -> ${waterOz} oz`;
     },
   },
 };

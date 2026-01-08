@@ -1,6 +1,6 @@
 # Macro Mapper
 
-Macro Mapper helps you set daily macro targets and log meals.
+Macro Mapper helps you measure and understand macronutrient intake so you can align meals with fitness goals like fat loss or muscle gain. It keeps targets simple, shows progress at a glance, and stays local-first.
 
 ## Deployed
 
@@ -20,6 +20,18 @@ npm run dev
 ```
 
 Vite will print the local URL (usually http://localhost:5173/).
+
+Notes:
+- The dev server is configured for port 8080 and binds to all interfaces in `vite.config.ts`.
+- Data is stored in localStorage (no backend).
+
+## Key Features
+
+- Daily targets calculated from goal body weight.
+- Progress bars for calories and macros with hover details.
+- Food journal with manual entry, edit, and delete.
+- Settings modal with data reset.
+- Upgrade modal that opens a prefilled email.
 
 ## Dependencies
 
@@ -45,7 +57,7 @@ Macros below are reasonable estimates and will vary by brand and portion size.
 
 ## Seed Example Data
 
-This will overwrite any existing food entries in local storage.
+This will append to any existing food entries in local storage.
 
 1. Start the dev server: `npm run dev`
 2. Open the app in your browser
@@ -94,12 +106,20 @@ This will overwrite any existing food entries in local storage.
     };
   });
 
-  localStorage.setItem('macroPlanner.entries', JSON.stringify(seeded));
-  console.log(`Seeded ${seeded.length} demo entries.`);
+  const storageKey = 'macroPlanner.entries';
+  const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
+  const merged = Array.isArray(existing) ? [...existing, ...seeded] : seeded;
+  localStorage.setItem(storageKey, JSON.stringify(merged));
+  console.log(`Seeded ${seeded.length} demo entries. Total entries: ${merged.length}.`);
 })();
 ```
 
 Refresh the page to see the seeded entries.
+
+## Data Storage
+
+- Goal weight: `macroPlanner.goalWeightLb`
+- Entries: `macroPlanner.entries`
 
 ## TODO
 

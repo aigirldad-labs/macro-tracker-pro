@@ -16,7 +16,6 @@ export function TargetsPanel({ entries }: TargetsPanelProps) {
   const [error, setError] = useState<string | null>(null);
   const [targets, setTargets] = useState<Targets | null>(null);
 
-  // Load stored goal weight on mount
   useEffect(() => {
     const stored = GoalRepository.get();
     if (stored) {
@@ -75,7 +74,7 @@ export function TargetsPanel({ entries }: TargetsPanelProps) {
     GoalRepository.set(parsed);
   };
 
-  const weightNum = parseFloat(goalWeight) || 200; // Default for examples
+  const weightNum = parseFloat(goalWeight) || 200;
 
   return (
     <Card className="bg-card border-border">
@@ -83,7 +82,6 @@ export function TargetsPanel({ entries }: TargetsPanelProps) {
         <CardTitle className="text-lg font-semibold text-foreground">Daily Targets</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Goal Weight Input */}
         <div className="space-y-2">
           <Label htmlFor="goal-weight" className="text-sm font-medium text-foreground">
             Goal Body Weight (lbs)
@@ -100,57 +98,81 @@ export function TargetsPanel({ entries }: TargetsPanelProps) {
             <p className="text-sm text-destructive">{error}</p>
           )}
           <p className="text-xs text-muted-foreground">
-            Used to calculate daily calories and macros.
+            Used to calculate calories and macro targets for your goals.
           </p>
+          <details className="px-1 pt-2">
+            <summary className="cursor-pointer text-xs font-medium text-foreground">
+              Why macros matter
+            </summary>
+            <div className="pt-2 pl-4 text-xs text-muted-foreground space-y-2">
+              <p>
+                Macros are protein, carbs, and fat. Protein supports muscle repair and growth, carbs fuel
+                training and daily activity, and fat helps with hormones and long-term energy.
+              </p>
+              <p>
+                These targets help you balance intake for goals like losing weight, maintaining, or building
+                muscle.
+              </p>
+            </div>
+          </details>
         </div>
 
-        {/* Targets Display */}
         <div className="space-y-3">
           <TargetRow
-            label="Daily Calories"
-            value={
-              targets
-                ? `${targets.dailyCalories} cal • ${remaining?.calories ?? 0} cal remaining`
-                : '-'
-            }
+            label="Calories"
+            value={targets ? `${targets.dailyCalories} cal` : '-'}
             formula={FORMULAS.dailyCalories}
             exampleWeight={weightNum}
+            consumed={todaysTotals.calories}
+            target={targets?.dailyCalories ?? 0}
+            remainingLabel={remaining ? `${remaining.calories} cal` : 'Set a goal weight first.'}
+            consumedLabel={`${todaysTotals.calories} cal`}
+            barColor="hsl(199 89% 48%)"
           />
           <TargetRow
             label="Protein"
-            value={
-              targets
-                ? `${targets.proteinGrams} g • ${remaining?.protein ?? 0} g remaining`
-                : '-'
-            }
+            value={targets ? `${targets.proteinGrams} g - ${targets.proteinCalories} cal` : '-'}
             formula={FORMULAS.protein}
             exampleWeight={weightNum}
+            consumed={todaysTotals.protein}
+            target={targets?.proteinGrams ?? 0}
+            remainingLabel={
+              remaining
+                ? `${remaining.protein} g - ${remaining.protein * 4} cal`
+                : 'Set a goal weight first.'
+            }
+            consumedLabel={`${todaysTotals.protein} g - ${todaysTotals.protein * 4} cal`}
+            barColor="hsl(142 76% 45%)"
           />
           <TargetRow
             label="Fat"
-            value={
-              targets
-                ? `${targets.fatGrams} g • ${remaining?.fat ?? 0} g remaining`
-                : '-'
-            }
+            value={targets ? `${targets.fatGrams} g - ${targets.fatCalories} cal` : '-'}
             formula={FORMULAS.fat}
             exampleWeight={weightNum}
+            consumed={todaysTotals.fat}
+            target={targets?.fatGrams ?? 0}
+            remainingLabel={
+              remaining
+                ? `${remaining.fat} g - ${remaining.fat * 9} cal`
+                : 'Set a goal weight first.'
+            }
+            consumedLabel={`${todaysTotals.fat} g - ${todaysTotals.fat * 9} cal`}
+            barColor="hsl(280 65% 60%)"
           />
           <TargetRow
             label="Carbs"
-            value={
-              targets
-                ? `${targets.carbGrams} g • ${remaining?.carbs ?? 0} g remaining`
-                : '-'
-            }
+            value={targets ? `${targets.carbGrams} g - ${targets.carbCalories} cal` : '-'}
             formula={FORMULAS.carbs}
             exampleWeight={weightNum}
-          />
-          <TargetRow
-            label="Water"
-            value={targets ? `${targets.waterOz} oz` : '-'}
-            formula={FORMULAS.water}
-            exampleWeight={weightNum}
+            consumed={todaysTotals.carbs}
+            target={targets?.carbGrams ?? 0}
+            remainingLabel={
+              remaining
+                ? `${remaining.carbs} g - ${remaining.carbs * 4} cal`
+                : 'Set a goal weight first.'
+            }
+            consumedLabel={`${todaysTotals.carbs} g - ${todaysTotals.carbs * 4} cal`}
+            barColor="hsl(43 96% 58%)"
           />
         </div>
       </CardContent>
@@ -169,16 +191,42 @@ interface TargetRowProps {
   value: string;
   formula: FormulaInfo;
   exampleWeight: number;
+  consumed: number;
+  target: number;
+  remainingLabel: string;
+  consumedLabel: string;
+  barColor: string;
 }
 
-function TargetRow({ label, value, formula, exampleWeight }: TargetRowProps) {
+function TargetRow({
+  label,
+  value,
+  formula,
+  exampleWeight,
+  consumed,
+  target,
+  remainingLabel,
+  consumedLabel,
+  barColor,
+}: TargetRowProps) {
+  const percentage = target > 0 ? Math.round((consumed / target) * 100) : 0;
+  const barWidth = Math.min(percentage, 100);
+  const percentLabel = percentage > 100 ? '>100%' : `${percentage}%`;
+  const showConsumed = percentage > 100;
+  const statusLabel = showConsumed ? 'Consumed' : 'Remaining';
+  const detailLabel = showConsumed ? consumedLabel : remainingLabel;
+
   return (
-    <div className="flex items-center justify-between py-2 border-b border-border last:border-0">
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-foreground">{label}</span>
+    <div className="grid grid-cols-5 gap-3 items-center py-2 border-b border-border last:border-0">
+      <div className="col-span-1 flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
-            <button className="text-muted-foreground hover:text-foreground transition-colors focus-ring rounded">
+            <button
+              type="button"
+              title={formula.formula}
+              aria-label={`${label} calculation details`}
+              className="text-muted-foreground hover:text-foreground transition-colors focus-ring rounded"
+            >
               <Info className="h-4 w-4" />
             </button>
           </TooltipTrigger>
@@ -190,8 +238,34 @@ function TargetRow({ label, value, formula, exampleWeight }: TargetRowProps) {
             </div>
           </TooltipContent>
         </Tooltip>
+        <span className="text-sm text-foreground">{label}</span>
       </div>
-      <span className="text-sm font-medium text-foreground">{value}</span>
+      <div className="col-span-4">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="relative h-10 rounded-md bg-muted/40 border border-border overflow-hidden">
+              <div
+                className="absolute inset-y-0 left-0"
+                style={{
+                  width: `${barWidth}%`,
+                  backgroundColor: barColor,
+                  opacity: 0.25,
+                }}
+              />
+              <div className="relative z-10 h-full flex items-center justify-between px-3 text-sm">
+                <span className="text-xs text-muted-foreground">{percentLabel}</span>
+                <span className="text-sm font-medium text-foreground text-right">{value}</span>
+              </div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs">
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">{statusLabel}</p>
+              <p className="text-sm text-foreground">{detailLabel}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </div>
     </div>
   );
 }
