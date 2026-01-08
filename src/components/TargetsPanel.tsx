@@ -209,6 +209,7 @@ function TargetRow({
   consumedLabel,
   barColor,
 }: TargetRowProps) {
+  const [infoOpen, setInfoOpen] = useState(false);
   const percentage = target > 0 ? Math.round((consumed / target) * 100) : 0;
   const barWidth = Math.min(percentage, 100);
   const percentLabel = percentage > 100 ? '>100%' : `${percentage}%`;
@@ -217,14 +218,15 @@ function TargetRow({
   const detailLabel = showConsumed ? consumedLabel : remainingLabel;
 
   return (
-    <div className="grid grid-cols-5 gap-3 items-center py-2 border-b border-border last:border-0">
-      <div className="col-span-1 flex items-center gap-2">
-        <Tooltip>
+    <div className="flex flex-col gap-2 py-2 border-b border-border last:border-0 md:grid md:grid-cols-5 md:gap-3 md:items-center">
+      <div className="md:col-span-1 flex items-center gap-2">
+        <Tooltip open={infoOpen} onOpenChange={setInfoOpen}>
           <TooltipTrigger asChild>
             <button
               type="button"
               title={formula.formula}
               aria-label={`${label} calculation details`}
+              onClick={() => setInfoOpen((prev) => !prev)}
               className="text-muted-foreground hover:text-foreground transition-colors focus-ring rounded"
             >
               <Info className="h-4 w-4" />
@@ -240,7 +242,7 @@ function TargetRow({
         </Tooltip>
         <span className="text-sm text-foreground">{label}</span>
       </div>
-      <div className="col-span-4">
+      <div className="md:col-span-4">
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="relative h-10 rounded-md bg-muted/40 border border-border overflow-hidden">
