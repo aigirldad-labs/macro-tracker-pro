@@ -82,7 +82,7 @@ export function ManualEntryForm({ onSubmit }: ManualEntryFormProps) {
           type="datetime-local"
           value={datetime}
           onChange={(e) => setDatetime(e.target.value)}
-          className="bg-input border-border"
+          className="bg-input border-border text-sm"
         />
       </div>
 
