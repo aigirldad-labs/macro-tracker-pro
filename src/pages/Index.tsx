@@ -23,7 +23,13 @@ const Index = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-foreground">Macro Mapper</h1>
+          <div>
+            <span className="text-lg font-semibold text-foreground">Macro Mapper</span>
+            <div className="flex gap-1 mt-1">
+              <span className="h-0.5 w-10 rounded-full bg-sky-400" />
+              <span className="h-0.5 w-6 rounded-full bg-emerald-400" />
+            </div>
+          </div>
           <div className="flex items-center gap-1">
             <Tooltip>
               <TooltipTrigger asChild>

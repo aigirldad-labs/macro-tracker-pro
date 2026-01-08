@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Macro Mapper logo mark">
+  <rect width="256" height="256" rx="48" fill="#0f172a"/>
+  <path d="M56 176V80h24l32 48 32-48h24v96h-24v-56l-32 48-32-48v56H56z" fill="#38bdf8"/>
+  <path d="M152 176V80h24l32 48 32-48h24v96h-24v-56l-32 48-32-48v56h-24z" fill="#34d399" opacity="0.9"/>
+</svg>
